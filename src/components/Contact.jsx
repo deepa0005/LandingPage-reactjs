@@ -24,7 +24,7 @@ const Contact = () => {
     e.preventDefault();
 
     try {
-      await axios.post('http://192.168.1.6:5000/api/leads', formData);
+     await axios.post('https://landing-page-nodejs-1.onrender.com/api/leads', formData);
       setStatus('success');
       setFormData({
         name: '',
