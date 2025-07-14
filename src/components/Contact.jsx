@@ -12,6 +12,7 @@ const Contact = () => {
   });
 
   const [status, setStatus] = useState(null); // For feedback
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -20,24 +21,38 @@ const Contact = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-    try {
-     await axios.post('https://landing-page-nodejs-1.onrender.com/api/leads', formData);
-      setStatus('success');
-      setFormData({
-        name: '',
-        email: '',
-        company: '',
-        services: '',
-        message: ''
-      });
-    } catch (error) {
-      setStatus('error');
-      console.error('Error submitting form:', error);
-    }
-  };
+  //   try {
+  //     await axios.post('https://landing-page-nodejs-1.onrender.com/api/leads', formData);
+  //     setStatus('success');
+  //     setFormData({
+  //       name: '',
+  //       email: '',
+  //       company: '',
+  //       services: '',
+  //       message: ''
+  //     });
+  //   } catch (error) {
+  //     setStatus('error');
+  //     console.error('Error submitting form:', error);
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/leads`, formData);
+    setStatus('success');
+    setFormData({ name: '', email: '', company: '', services: '', message: '' });
+  } catch (error) {
+    setStatus('error');
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <section id="contact" className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
       {/* Background Animation */}
@@ -154,10 +169,11 @@ const Contact = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  disabled={loading}
+                  className={`w-full bg-gradient-to-r from-purple-500 to-pink-500 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:from-purple-600 hover:to-pink-600'} text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 shadow-lg hover:shadow-xl`}
                 >
-                  Send Message
-                  <Send className="w-5 h-5" />
+                  {loading ? 'Sending...' : 'Send Message'}
+                  {!loading && <Send className="w-5 h-5" />}
                 </button>
               </form>
             </div>
@@ -168,7 +184,7 @@ const Contact = () => {
             <div>
               <h3 className="text-2xl font-bold mb-6">Get in touch</h3>
               <p className="text-purple-100 mb-8">
-                We're here to help you achieve your B2B growth objectives. 
+                We're here to help you achieve your B2B growth objectives.
                 Reach out to discuss your specific needs and get a custom strategy.
               </p>
             </div>
