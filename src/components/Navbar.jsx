@@ -10,20 +10,16 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
-      // Set background based on scroll position
+
       setIsScrolled(currentScrollY > 50);
-      
-      // Hide/show navbar based on scroll direction
+
       if (currentScrollY < lastScrollY || currentScrollY < 100) {
-        // Scrolling up or near top - show navbar
         setIsVisible(true);
       } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling down and past threshold - hide navbar
         setIsVisible(false);
-        setIsOpen(false); // Close mobile menu when hiding
+        setIsOpen(false);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
 
@@ -48,25 +44,33 @@ const Navbar = () => {
     setIsOpen(false);
   };
 
+  const handleGetStarted = () => {
+    scrollToSection('#contact'); // 👉 scroll to your contact or form section
+  };
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 transform ${
-      isVisible ? 'translate-y-0' : '-translate-y-full'
-    } ${
-      isScrolled 
-        ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-purple-100' 
-        : 'bg-transparent'
-    }`}>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 transform ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      } ${
+        isScrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-purple-100'
+          : 'bg-transparent'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <div className="flex items-center gap-2 group cursor-pointer">
             <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-2 rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Zap className="w-6 h-6 text-white" />
             </div>
-            <span className={`text-xl lg:text-2xl font-bold transition-colors duration-300 ${
-              isScrolled ? 'text-gray-900' : 'text-white'
-            }`}>
-             
+            <span
+              className={`text-xl lg:text-2xl font-bold transition-colors duration-300 ${
+                isScrolled ? 'text-gray-900' : 'text-white'
+              }`}
+            >
+              DevCraft
             </span>
           </div>
 
@@ -77,8 +81,8 @@ const Navbar = () => {
                 key={index}
                 onClick={() => scrollToSection(item.href)}
                 className={`font-medium transition-all duration-300 hover:scale-105 relative group ${
-                  isScrolled 
-                    ? 'text-gray-700 hover:text-purple-600' 
+                  isScrolled
+                    ? 'text-gray-700 hover:text-purple-600'
                     : 'text-white hover:text-purple-300'
                 }`}
               >
@@ -90,28 +94,31 @@ const Navbar = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:block">
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+            <button
+              onClick={handleGetStarted}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            >
               Get Started
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className={`lg:hidden p-2 rounded-lg transition-colors duration-300 ${
-              isScrolled 
-                ? 'text-gray-700 hover:bg-gray-100' 
-                : 'text-white hover:bg-white/10'
+              isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'
             }`}
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
-        {/* Mobile Navigation */}
-        <div className={`lg:hidden transition-all duration-300 overflow-hidden ${
-          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        }`}>
+        {/* Mobile Menu */}
+        <div
+          className={`lg:hidden transition-all duration-300 overflow-hidden ${
+            isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
           <div className="py-4 space-y-2 bg-white/95 backdrop-blur-md rounded-lg mt-2 border border-purple-100 shadow-lg">
             {navItems.map((item, index) => (
               <button
@@ -123,7 +130,10 @@ const Navbar = () => {
               </button>
             ))}
             <div className="px-4 pt-2">
-              <button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-lg">
+              <button
+                onClick={handleGetStarted}
+                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-lg"
+              >
                 Get Started
               </button>
             </div>
