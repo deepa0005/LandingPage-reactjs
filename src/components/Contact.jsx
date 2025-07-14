@@ -168,17 +168,26 @@ const Contact = () => {
                   ></textarea>
                 </div>
 
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  Send Message
+                  <Send className="w-5 h-5" />
+                </button>
+
                 {status === 'success' && (
-                  <p className="mt-4 text-green-400 font-medium text-center">
+                  <p className="mt-4 text-green-400 font-medium text-center animate-fade-in">
                     ✅ Message sent successfully!
                   </p>
                 )}
 
                 {status === 'error' && (
-                  <p className="mt-4 text-red-400 font-medium text-center">
+                  <p className="mt-4 text-red-400 font-medium text-center animate-fade-in">
                     ❌ Failed to send message. Please try again later.
                   </p>
                 )}
+
               </form>
             </div>
           </div>
