@@ -43,17 +43,30 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/leads`, formData);
-      setStatus('success');
-      setFormData({ name: '', email: '', company: '', services: '', message: '' });
+      const response = await axios.post('https://landing-page-nodejs-1.onrender.com/api/leads', formData);
+
+      console.log('✅ Response:', response); // 🔍 log response
+
+      if (response.status === 201 || response.data.message === "Lead saved successfully.") {
+        setStatus('success');
+        setFormData({
+          name: '',
+          email: '',
+          company: '',
+          services: '',
+          message: ''
+        });
+      } else {
+        setStatus('error'); // fallback if status not 201
+      }
     } catch (error) {
       setStatus('error');
-    } finally {
-      setLoading(false);
+      console.error('❌ Error submitting form:', error); // Check this in console
     }
   };
+
   return (
     <section id="contact" className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
       {/* Background Animation */}
