@@ -22,50 +22,71 @@ const Contact = () => {
     });
   };
 
+  // Handle form submission
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
 
   //   try {
-  //     await axios.post('https://landing-page-nodejs-1.onrender.com/api/leads', formData);
-  //     setStatus('success');
-  //     setFormData({
-  //       name: '',
-  //       email: '',
-  //       company: '',
-  //       services: '',
-  //       message: ''
-  //     });
+  //     const response = await axios.post('https://landing-page-nodejs-1.onrender.com/api/leads', formData);
+
+  //     console.log('✅ Response:', response); // 🔍 log response
+
+  //     if (response.status === 201 || response.data.message === "Lead saved successfully.") {
+  //       setStatus('success');
+  //       setFormData({
+  //         name: '',
+  //         email: '',
+  //         company: '',
+  //         services: '',
+  //         message: ''
+  //       });
+  //     } else {
+  //       setStatus('error'); // fallback if status not 201
+  //     }
   //   } catch (error) {
   //     setStatus('error');
-  //     console.error('Error submitting form:', error);
+  //     console.error('❌ Error submitting form:', error); // Check this in console
   //   }
   // };
 
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const response = await axios.post('https://landing-page-nodejs-1.onrender.com/api/leads', formData);
-
-      console.log('✅ Response:', response); // 🔍 log response
-
-      if (response.status === 201 || response.data.message === "Lead saved successfully.") {
-        setStatus('success');
-        setFormData({
-          name: '',
-          email: '',
-          company: '',
-          services: '',
-          message: ''
-        });
-      } else {
-        setStatus('error'); // fallback if status not 201
-      }
-    } catch (error) {
-      setStatus('error');
-      console.error('❌ Error submitting form:', error); // Check this in console
-    }
+  const lead = {
+    name: formData.name,
+    email: formData.email,
+    phone: formData.phone,
+    company: formData.company,
+    services: formData.services,
+    message: formData.message,
   };
+
+  try {
+    const res = await fetch("https://landing-page-nodejs-1.onrender.com/api/zoho/send-lead", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(lead)
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert("✅ Lead sent to Zoho CRM!");
+      setFormData({
+        name: "", email: "", phone: "", company: "", services: "", message: ""
+      });
+    } else {
+      alert("❌ Failed to send lead");
+      console.log(result);
+    }
+  } catch (error) {
+    console.error("Fetch error:", error);
+    alert("❌ Something went wrong");
+  }
+};
 
   return (
     <section id="contact" className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
