@@ -65,7 +65,7 @@ const Contact = () => {
 
 
     try {
-      const res = await fetch("https://landing-page-nodejs-1.onrender.com/api/zoho/send-leads", {
+      const res = await fetch("https://landing-page-nodejs-1.onrender.com/api/zoho/send-lead", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
