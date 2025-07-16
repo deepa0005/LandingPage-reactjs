@@ -17,7 +17,8 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import OAuthCallback from './components/OAuthCallback';
 
-function App() {
+// 🏠 Moved landing sections into Home component
+function Home() {
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -38,6 +39,7 @@ function App() {
   );
 }
 
+// ✅ Main App with routing
 function App() {
   return (
     <Router>
