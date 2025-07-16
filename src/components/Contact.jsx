@@ -51,44 +51,44 @@ const Contact = () => {
 
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-   const lead = {
-  name: formData.name,
-  email: formData.email,
-  phone: formData.phone,
-  location: formData.location,
-  type: formData.type,       // 'individual' or 'company'
-  company: formData.type === 'company' ? formData.company : '',  // Only send if type is 'company'
-  services: formData.services
-};
+  const lead = {
+    name: formData.name,
+    email: formData.email,
+    phone: formData.phone,
+    location: formData.location,
+    type: formData.type,
+    company: formData.type === "company" ? formData.company : "",
+    services: formData.services,
+    message: formData.message
+  };
 
-
-    try {
-      const res = await fetch("https://landing-page-nodejs-1.onrender.com/api/zoho/send-lead", {
-        method: "POST",
+  try {
+    const res = await axios.post(
+      "https://landing-page-nodejs-1.onrender.com/api/leads/zoho/send-lead",
+      lead,
+      {
         headers: {
           "Content-Type": "application/json"
-        },
-        body: JSON.stringify(lead)
-      });
-
-      const result = await res.json();
-
-      if (res.ok) {
-        alert("✅ Lead sent to Zoho CRM!");
-        setFormData({
-          name: "", email: "", phone: "", company: "", services: "", message: ""
-        });
-      } else {
-        alert("❌ Failed to send lead");
-        console.log(result);
+        }
       }
-    } catch (error) {
-      console.error("Fetch error:", error);
-      alert("❌ Something went wrong");
+    );
+
+    if (res.status === 201 || res.data.message?.includes("Lead saved")) {
+      alert("✅ Lead sent to Zoho CRM!");
+      setFormData({
+        name: "", email: "", phone: "", company: "", services: "", location: "", type: "", message: ""
+      });
+    } else {
+      alert("❌ Failed to send lead");
+      console.log("Response:", res.data);
     }
-  };
+  } catch (error) {
+    console.error("Axios error:", error.response?.data || error.message);
+    alert("❌ Something went wrong");
+  }
+};
 
   return (
     <section id="contact" className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
