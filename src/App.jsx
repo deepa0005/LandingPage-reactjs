@@ -13,6 +13,7 @@ import Tools from './components/Tools';
 import Blog from './components/Blog';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import OAuthCallback from './components/OAuthCallback';
 
 function App() {
   return (
@@ -32,6 +33,17 @@ function App() {
       <Contact />
       <Footer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/oauth/callback" element={<OAuthCallback />} />
+      </Routes>
+    </Router>
   );
 }
 
