@@ -51,42 +51,44 @@ const Contact = () => {
 
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const lead = {
-    name: formData.name,
-    email: formData.email,
-    phone: formData.phone,
-    company: formData.company,
-    services: formData.services,
-    message: formData.message,
-  };
-
-  try {
-    const res = await fetch("https://landing-page-nodejs-1.onrender.com/api/zoho/send-lead", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(lead)
-    });
-
-    const result = await res.json();
-
-    if (res.ok) {
-      alert("✅ Lead sent to Zoho CRM!");
-      setFormData({
-        name: "", email: "", phone: "", company: "", services: "", message: ""
-      });
-    } else {
-      alert("❌ Failed to send lead");
-      console.log(result);
-    }
-  } catch (error) {
-    console.error("Fetch error:", error);
-    alert("❌ Something went wrong");
-  }
+   const lead = {
+  name: formData.name,
+  email: formData.email,
+  phone: formData.phone,
+  location: formData.location,
+  type: formData.type,       // 'individual' or 'company'
+  company: formData.type === 'company' ? formData.company : '',  // Only send if type is 'company'
+  services: formData.services
 };
+
+
+    try {
+      const res = await fetch("https://landing-page-nodejs-1.onrender.com/api/zoho/send-lead", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(lead)
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        alert("✅ Lead sent to Zoho CRM!");
+        setFormData({
+          name: "", email: "", phone: "", company: "", services: "", message: ""
+        });
+      } else {
+        alert("❌ Failed to send lead");
+        console.log(result);
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      alert("❌ Something went wrong");
+    }
+  };
 
   return (
     <section id="contact" className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
@@ -111,120 +113,177 @@ const Contact = () => {
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Contact Form */}
-          <div className="animate-fade-in-left">
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-white/20 hover:border-white/40 transition-all duration-500">
-              <h3 className="text-2xl font-bold mb-6">Send us a message</h3>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid sm:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium mb-2">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
-                      placeholder="John Doe"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
-                      placeholder="john@company.com"
-                      required
-                    />
-                  </div>
-                </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Contacting As: Individual or Company */}
+           <div>
+  <label className="block text-sm font-medium mb-2">
+    I'm contacting as a *
+  </label>
+  <div className="flex gap-4">
+    {/* Individual */}
+    <label className="flex items-center space-x-2 cursor-pointer">
+      <input
+        type="radio"
+        name="type"
+        value="individual"
+        checked={formData.type === 'individual'}
+        onChange={handleChange}
+        required
+        className="accent-purple-500 w-4 h-4"
+      />
+      <span className="text-white">Individual</span>
+    </label>
 
-                <div>
-                  <label htmlFor="company" className="block text-sm font-medium mb-2">
-                    Company Name
-                  </label>
-                  <input
-                    type="text"
-                    id="company"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
-                    placeholder="Your Company"
-                  />
-                </div>
+    {/* Company */}
+    <label className="flex items-center space-x-2 cursor-pointer">
+      <input
+        type="radio"
+        name="type"
+        value="company"
+        checked={formData.type === 'company'}
+        onChange={handleChange}
+        required
+        className="accent-pink-500 w-4 h-4"
+      />
+      <span className="text-white">Company</span>
+    </label>
+  </div>
+</div>
 
-                <div>
-                  <label htmlFor="services" className="block text-sm font-medium mb-2">
-                    Services Interested In
-                  </label>
-                  <select
-                    id="services"
-                    name="services"
-                    value={formData.services}
-                    onChange={handleChange}
-                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
-                  >
-                    <option value="" className="text-gray-900">Select a service</option>
-                    <option value="lead-generation" className="text-gray-900">Lead Generation</option>
-                    <option value="content-marketing" className="text-gray-900">Content Marketing</option>
-                    <option value="web-development" className="text-gray-900">Website & App Development</option>
-                    <option value="ecommerce" className="text-gray-900">E-commerce Solutions</option>
-                    <option value="seo-sem" className="text-gray-900">SEO / SEM</option>
-                    <option value="reputation-management" className="text-gray-900">Reputation Management</option>
-                    <option value="sales-enablement" className="text-gray-900">Sales Enablement</option>
-                    <option value="multiple" className="text-gray-900">Multiple Services</option>
-                  </select>
-                </div>
 
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-2">
-                    Message *
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows={4}
-                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300 resize-none"
-                    placeholder="Tell us about your project and goals..."
-                    required
-                  ></textarea>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                >
-                  Send Message
-                  <Send className="w-5 h-5" />
-                </button>
-
-                {status === 'success' && (
-                  <p className="mt-4 text-green-400 font-medium text-center animate-fade-in">
-                    ✅ Message sent successfully!
-                  </p>
-                )}
-
-                {status === 'error' && (
-                  <p className="mt-4 text-red-400 font-medium text-center animate-fade-in">
-                    ❌ Failed to send message. Please try again later.
-                  </p>
-                )}
-
-              </form>
+            {/* Name and Email */}
+            <div className="grid sm:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium mb-2">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
+                  placeholder="John Doe"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium mb-2">
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
+                  placeholder="john@company.com"
+                  required
+                />
+              </div>
             </div>
-          </div>
+
+            {/* Phone and Location */}
+            <div className="grid sm:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium mb-2">
+                  Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
+                  placeholder="+91 9876543210"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="location" className="block text-sm font-medium mb-2">
+                  Location *
+                </label>
+                <input
+                  type="text"
+                  id="location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
+                  placeholder="City, Country"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Company Name: Only if type is 'company' */}
+            {formData.type === 'company' && (
+              <div>
+                <label htmlFor="company" className="block text-sm font-medium mb-2">
+                  Company Name *
+                </label>
+                <input
+                  type="text"
+                  id="company"
+                  name="company"
+                  value={formData.company}
+                  onChange={handleChange}
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
+                  placeholder="Your Company"
+                  required
+                />
+              </div>
+            )}
+
+            {/* Services Dropdown */}
+            <div>
+              <label htmlFor="services" className="block text-sm font-medium mb-2">
+                Services Interested In
+              </label>
+              <select
+                id="services"
+                name="services"
+                value={formData.services}
+                onChange={handleChange}
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
+              >
+                <option value="" className="text-gray-900">Select a service</option>
+                <option value="lead-generation" className="text-gray-900">Lead Generation</option>
+                <option value="content-marketing" className="text-gray-900">Content Marketing</option>
+                <option value="web-development" className="text-gray-900">Website & App Development</option>
+                <option value="ecommerce" className="text-gray-900">E-commerce Solutions</option>
+                <option value="seo-sem" className="text-gray-900">SEO / SEM</option>
+                <option value="reputation-management" className="text-gray-900">Reputation Management</option>
+                <option value="sales-enablement" className="text-gray-900">Sales Enablement</option>
+                <option value="multiple" className="text-gray-900">Multiple Services</option>
+              </select>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            >
+              Send Message
+              <Send className="w-5 h-5" />
+            </button>
+
+            {/* Status Messages */}
+            {status === 'success' && (
+              <p className="mt-4 text-green-400 font-medium text-center animate-fade-in">
+                ✅ Message sent successfully!
+              </p>
+            )}
+            {status === 'error' && (
+              <p className="mt-4 text-red-400 font-medium text-center animate-fade-in">
+                ❌ Failed to send message. Please try again later.
+              </p>
+            )}
+          </form>
+
 
           {/* Contact Information */}
           <div className="space-y-6 lg:space-y-8 animate-fade-in-right">
