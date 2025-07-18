@@ -65,15 +65,7 @@ const Contact = () => {
   };
 
   try {
-    const res = await axios.post(
-      "https://landing-page-nodejs-1.onrender.com/api/leads/zoho/send-lead",
-      lead,
-      {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-    );
+   const response = await axios.post('https://landing-page-nodejs-1.onrender.com/api/leads', formData);
 
     if (res.status === 201 || res.data.message?.includes("Lead saved")) {
       alert("✅ Lead sent to Zoho CRM!");
