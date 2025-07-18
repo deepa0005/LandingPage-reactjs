@@ -211,15 +211,15 @@ const Contact = () => {
                 onChange={handleChange}
                 className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white"
               >
-                <option value="">Select a service</option>
-                <option value="lead-generation">Lead Generation</option>
-                <option value="content-marketing">Content Marketing</option>
-                <option value="web-development">Website & App Development</option>
-                <option value="ecommerce">E-commerce Solutions</option>
-                <option value="seo-sem">SEO / SEM</option>
-                <option value="reputation-management">Reputation Management</option>
-                <option value="sales-enablement">Sales Enablement</option>
-                <option value="multiple">Multiple Services</option>
+                <option value="" className="text-gray-900">Select a service</option>
+                <option value="lead-generation" className="text-gray-900">Lead Generation</option>
+                <option value="content-marketing" className="text-gray-900">Content Marketing</option>
+                <option value="web-development" className="text-gray-900">Website & App Development</option>
+                <option value="ecommerce" className="text-gray-900">E-commerce Solutions</option>
+                <option value="seo-sem" className="text-gray-900">SEO / SEM</option>
+                <option value="reputation-management" className="text-gray-900">Reputation Management</option>
+                <option value="sales-enablement" className="text-gray-900">Sales Enablement</option>
+                <option value="multiple" className="text-gray-900">Multiple Services</option>
               </select>
             </div>
 
