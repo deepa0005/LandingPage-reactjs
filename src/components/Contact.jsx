@@ -6,14 +6,16 @@ const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
+    location: '',
+    type: '',
     company: '',
     services: '',
     message: ''
   });
 
-  const [status, setStatus] = useState(null); // For feedback
+  const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
-
 
   const handleChange = (e) => {
     setFormData({
@@ -22,65 +24,49 @@ const Contact = () => {
     });
   };
 
-  // Handle form submission
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   try {
-  //     const response = await axios.post('https://landing-page-nodejs-1.onrender.com/api/leads', formData);
-
-  //     console.log('✅ Response:', response); // 🔍 log response
-
-  //     if (response.status === 201 || response.data.message === "Lead saved successfully.") {
-  //       setStatus('success');
-  //       setFormData({
-  //         name: '',
-  //         email: '',
-  //         company: '',
-  //         services: '',
-  //         message: ''
-  //       });
-  //     } else {
-  //       setStatus('error'); // fallback if status not 201
-  //     }
-  //   } catch (error) {
-  //     setStatus('error');
-  //     console.error('❌ Error submitting form:', error); // Check this in console
-  //   }
-  // };
-
-
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    setLoading(true);
+    setStatus(null);
 
-  const lead = {
-    name: formData.name,
-    email: formData.email,
-    phone: formData.phone,
-    location: formData.location,
-    type: formData.type,
-    company: formData.type === "company" ? formData.company : "",
-    services: formData.services,
-    message: formData.message
-  };
+    const lead = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      location: formData.location,
+      type: formData.type,
+      company: formData.type === "company" ? formData.company : "",
+      services: formData.services,
+      message: formData.message
+    };
 
-  try {
-   const response = await axios.post('https://landing-page-nodejs-1.onrender.com/api/leads', formData);
+    try {
+      const response = await axios.post('https://landing-page-nodejs-1.onrender.com/api/leads', lead);
 
-    if (res.status === 201 || res.data.message?.includes("Lead saved")) {
-      alert("✅ Lead sent to Zoho CRM!");
-      setFormData({
-        name: "", email: "", phone: "", company: "", services: "", location: "", type: "", message: ""
-      });
-    } else {
-      alert("❌ Failed to send lead");
-      console.log("Response:", res.data);
+      console.log("📥 Server Response:", response.data);
+
+      if (response.status === 201 || response.data.message?.includes("Lead saved")) {
+        setStatus('success');
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          location: '',
+          type: '',
+          company: '',
+          services: '',
+          message: ''
+        });
+      } else {
+        setStatus('error');
+      }
+    } catch (error) {
+      console.error("Axios error:", error.response?.data || error.message);
+      setStatus('error');
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Axios error:", error.response?.data || error.message);
-    alert("❌ Something went wrong");
-  }
-};
+  };
 
   return (
     <section id="contact" className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
@@ -106,73 +92,64 @@ const Contact = () => {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Contact Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Contacting As: Individual or Company */}
-           <div>
-  <label className="block text-sm font-medium mb-2">
-    I'm contacting as a *
-  </label>
-  <div className="flex gap-4">
-    {/* Individual */}
-    <label className="flex items-center space-x-2 cursor-pointer">
-      <input
-        type="radio"
-        name="type"
-        value="individual"
-        checked={formData.type === 'individual'}
-        onChange={handleChange}
-        required
-        className="accent-purple-500 w-4 h-4"
-      />
-      <span className="text-white">Individual</span>
-    </label>
+            {/* Contacting As */}
+            <div>
+              <label className="block text-sm font-medium mb-2">I'm contacting as a *</label>
+              <div className="flex gap-4">
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="type"
+                    value="individual"
+                    checked={formData.type === 'individual'}
+                    onChange={handleChange}
+                    required
+                    className="accent-purple-500 w-4 h-4"
+                  />
+                  <span className="text-white">Individual</span>
+                </label>
 
-    {/* Company */}
-    <label className="flex items-center space-x-2 cursor-pointer">
-      <input
-        type="radio"
-        name="type"
-        value="company"
-        checked={formData.type === 'company'}
-        onChange={handleChange}
-        required
-        className="accent-pink-500 w-4 h-4"
-      />
-      <span className="text-white">Company</span>
-    </label>
-  </div>
-</div>
-
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="type"
+                    value="company"
+                    checked={formData.type === 'company'}
+                    onChange={handleChange}
+                    required
+                    className="accent-pink-500 w-4 h-4"
+                  />
+                  <span className="text-white">Company</span>
+                </label>
+              </div>
+            </div>
 
             {/* Name and Email */}
             <div className="grid sm:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-2">
-                  Full Name *
-                </label>
+                <label htmlFor="name" className="block text-sm font-medium mb-2">Full Name *</label>
                 <input
                   type="text"
                   id="name"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
-                  placeholder="John Doe"
                   required
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200"
+                  placeholder="John Doe"
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2">
-                  Email Address *
-                </label>
+                <label htmlFor="email" className="block text-sm font-medium mb-2">Email Address *</label>
                 <input
                   type="email"
                   id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
-                  placeholder="john@company.com"
                   required
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200"
+                  placeholder="john@company.com"
                 />
               </div>
             </div>
@@ -180,113 +157,97 @@ const Contact = () => {
             {/* Phone and Location */}
             <div className="grid sm:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium mb-2">
-                  Phone Number *
-                </label>
+                <label htmlFor="phone" className="block text-sm font-medium mb-2">Phone Number *</label>
                 <input
                   type="tel"
                   id="phone"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
-                  placeholder="+91 9876543210"
                   required
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200"
+                  placeholder="+91 9876543210"
                 />
               </div>
               <div>
-                <label htmlFor="location" className="block text-sm font-medium mb-2">
-                  Location *
-                </label>
+                <label htmlFor="location" className="block text-sm font-medium mb-2">Location *</label>
                 <input
                   type="text"
                   id="location"
                   name="location"
                   value={formData.location}
                   onChange={handleChange}
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
-                  placeholder="City, Country"
                   required
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200"
+                  placeholder="City, Country"
                 />
               </div>
             </div>
 
-            {/* Company Name: Only if type is 'company' */}
+            {/* Company Name - only if 'company' selected */}
             {formData.type === 'company' && (
               <div>
-                <label htmlFor="company" className="block text-sm font-medium mb-2">
-                  Company Name *
-                </label>
+                <label htmlFor="company" className="block text-sm font-medium mb-2">Company Name *</label>
                 <input
                   type="text"
                   id="company"
                   name="company"
                   value={formData.company}
                   onChange={handleChange}
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
-                  placeholder="Your Company"
                   required
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-purple-200"
+                  placeholder="Your Company"
                 />
               </div>
             )}
 
-            {/* Services Dropdown */}
+            {/* Services */}
             <div>
-              <label htmlFor="services" className="block text-sm font-medium mb-2">
-                Services Interested In
-              </label>
+              <label htmlFor="services" className="block text-sm font-medium mb-2">Services Interested In</label>
               <select
                 id="services"
                 name="services"
                 value={formData.services}
                 onChange={handleChange}
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all duration-300"
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white"
               >
-                <option value="" className="text-gray-900">Select a service</option>
-                <option value="lead-generation" className="text-gray-900">Lead Generation</option>
-                <option value="content-marketing" className="text-gray-900">Content Marketing</option>
-                <option value="web-development" className="text-gray-900">Website & App Development</option>
-                <option value="ecommerce" className="text-gray-900">E-commerce Solutions</option>
-                <option value="seo-sem" className="text-gray-900">SEO / SEM</option>
-                <option value="reputation-management" className="text-gray-900">Reputation Management</option>
-                <option value="sales-enablement" className="text-gray-900">Sales Enablement</option>
-                <option value="multiple" className="text-gray-900">Multiple Services</option>
+                <option value="">Select a service</option>
+                <option value="lead-generation">Lead Generation</option>
+                <option value="content-marketing">Content Marketing</option>
+                <option value="web-development">Website & App Development</option>
+                <option value="ecommerce">E-commerce Solutions</option>
+                <option value="seo-sem">SEO / SEM</option>
+                <option value="reputation-management">Reputation Management</option>
+                <option value="sales-enablement">Sales Enablement</option>
+                <option value="multiple">Multiple Services</option>
               </select>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transform hover:scale-105 shadow-lg transition-all duration-300"
             >
-              Send Message
+              {loading ? "Sending..." : "Send Message"}
               <Send className="w-5 h-5" />
             </button>
 
             {/* Status Messages */}
             {status === 'success' && (
-              <p className="mt-4 text-green-400 font-medium text-center animate-fade-in">
-                ✅ Message sent successfully!
-              </p>
+              <p className="mt-4 text-green-400 font-medium text-center">✅ Message sent successfully!</p>
             )}
             {status === 'error' && (
-              <p className="mt-4 text-red-400 font-medium text-center animate-fade-in">
-                ❌ Failed to send message. Please try again later.
-              </p>
+              <p className="mt-4 text-red-400 font-medium text-center">❌ Something went wrong. Please try again.</p>
             )}
           </form>
 
-
-          {/* Contact Information */}
+          {/* Contact Info */}
           <div className="space-y-6 lg:space-y-8 animate-fade-in-right">
             <div>
               <h3 className="text-2xl font-bold mb-6">Get in touch</h3>
-              <p className="text-purple-100 mb-8">
-                We're here to help you achieve your B2B growth objectives.
-                Reach out to discuss your specific needs and get a custom strategy.
-              </p>
+              <p className="text-purple-100 mb-8">We're here to help you achieve your B2B growth objectives. Reach out to discuss your specific needs and get a custom strategy.</p>
             </div>
-
             <div className="space-y-6">
               <div className="flex items-start gap-4 group">
                 <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-lg">
@@ -329,18 +290,9 @@ const Contact = () => {
                 <h4 className="font-semibold text-lg">Business Hours</h4>
               </div>
               <div className="space-y-2 text-purple-100">
-                <div className="flex justify-between">
-                  <span>Monday - Friday</span>
-                  <span>9:00 AM - 6:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Saturday</span>
-                  <span>10:00 AM - 4:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Sunday</span>
-                  <span>Closed</span>
-                </div>
+                <div className="flex justify-between"><span>Monday - Friday</span><span>9:00 AM - 6:00 PM</span></div>
+                <div className="flex justify-between"><span>Saturday</span><span>10:00 AM - 4:00 PM</span></div>
+                <div className="flex justify-between"><span>Sunday</span><span>Closed</span></div>
               </div>
             </div>
           </div>
